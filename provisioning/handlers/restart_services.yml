@@ -1,0 +1,8 @@
+# Handlers for restarting services
+#
+
+- name: restart docker 
+  action: service name=docker state=restarted
+
+- name: restart flanneld
+  action: service name=flanneld state=restarted

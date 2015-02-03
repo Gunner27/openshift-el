@@ -1,0 +1,4 @@
+---
+etcd_master_ip: "{{ hostvars['master']['ansible_eth0']['ipv4']['address'] }}" 
+etcd_master_port: 4001
+etcd_flannel_key: '/openshift/network'
