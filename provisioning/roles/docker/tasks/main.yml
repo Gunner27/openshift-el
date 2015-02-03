@@ -1,0 +1,12 @@
+---
+  - name: "install docker and kubernetes"
+    yum: name={{ item }}docker,git,golang,bridge-utils,e2fsprogs,hg,net-tools
+         enablerepo=rhel-7-server-extras-rpms,rhel-7-server-optional-rpms
+         state=latest
+    with_items:
+      -
+    tags:
+      - docker
+
+  - name: "restat docker daemon"
+    service: name=docker state=started
