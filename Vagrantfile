@@ -56,6 +56,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master.registration.subscriber_username = ENV['SUB_USERNAME']
     master.registration.subscriber_password = ENV['SUB_PASSWORD']
 
+    master.vm.synced_folder ".", "/vagrant", type: "rsync", rsync_exclude: ".git/"
+
     master.vm.provision "ansible" do |ansible|
       ansible.playbook = "provisioning/playbook.yml"
 
@@ -87,6 +89,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         
         minion.vm.network "private_network", ip: "#{minion_ip}"
         minion.vm.hostname = "minion-#{minion_index}"
+
+        minion.vm.synced_folder ".", "/vagrant", type: "rsync", rsync_exclude: ".git/"
 
         # this is required to subscribe RHEL7
         minion.registration.subscriber_username = ENV['SUB_USERNAME']
