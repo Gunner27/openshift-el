@@ -1,0 +1,17 @@
+---
+# install pkg
+- name: install etcd server packages
+  yum: name={{ item }} state=present
+  with_items: 
+    - etcd 
+
+- name: generate flannel configuration
+  template:
+    src=flannel-config.json.j2
+    dest=/tmp/flannel-config.json
+    owner=root
+    group=root
+    mode=0644
+
+- name: deploy flannel configuration to etcd
+  action: shell curl -L "http://{{ etcd_master_ip }}:{{ etcd_master_port}}/v2/keys/{{ etcd_flannel_key  }}/network/config" -XPUT --data-urlencode value@/tmp/flannel-config.json 
