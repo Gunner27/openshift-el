@@ -7,6 +7,3 @@
       -
     tags:
       - docker
-
-  - name: "restat docker daemon"
-    service: name=docker state=started

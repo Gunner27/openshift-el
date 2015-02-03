@@ -38,7 +38,7 @@ VAGRANTFILE_API_VERSION = "2"
       "num_minions" => ENV['OPENSHIFT_NUM_MINIONS'] || 2,
       "libvirt" => {
         "box_name" => "rhel-7.0",
-        "box_url" => "https://"
+        "box_url" => "http://file.rdu.redhat.com/~jshubin/vagrant/rhel-7.0/rhel-7.0.box"
       },
     }
   end
@@ -58,12 +58,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     master.vm.synced_folder ".", "/vagrant", type: "rsync", rsync_exclude: ".git/"
 
-    master.vm.provision "ansible" do |ansible|
-      ansible.playbook = "provisioning/playbook.yml"
-
-      ansible.groups = generate_ansible_groups(vagrant_openshift_config['num_minions'])
-
-    end # ansible
   end # master
 
   # and num_minions minions, or nodes...
@@ -96,14 +90,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         minion.registration.subscriber_username = ENV['SUB_USERNAME']
         minion.registration.subscriber_password = ENV['SUB_PASSWORD']
 
-        minion.vm.provision "ansible" do |ansible|
-          ansible.limit = 'all'
-          ansible.playbook = "provisioning/playbook.yml"
-      
-          # FIXME this feels like there must be a better solution
-          ansible.groups = generate_ansible_groups(vagrant_openshift_config['num_minions'])
-       end # ansible
       end # minion
     end # do
   end # if dev_cluster
+
+  # provision all machines using ansible
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "provisioning/playbook.yml"
+
+    ansible.groups = generate_ansible_groups(vagrant_openshift_config['num_minions'])
+
+#    ansible.verbose = 'vvv'
+  end # ansible
+ 
 end # config

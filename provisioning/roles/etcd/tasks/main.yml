@@ -14,4 +14,4 @@
     mode=0644
 
 - name: deploy flannel configuration to etcd
-  action: shell curl -L "http://{{ etcd_master_ip }}:{{ etcd_master_port}}/v2/keys/{{ etcd_flannel_key  }}/network/config" -XPUT --data-urlencode value@/tmp/flannel-config.json 
+  action: shell curl -L "http://{{ etcd_master_ip }}:{{ etcd_master_port}}/v2/keys/{{ etcd_flannel_key  }}/config" -XPUT --data-urlencode value@/tmp/flannel-config.json 

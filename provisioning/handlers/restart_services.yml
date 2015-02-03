@@ -4,5 +4,5 @@
 - name: restart docker 
   action: service name=docker state=restarted
 
-- name: restart flanneld
+- name: restart flannel
   action: service name=flanneld state=restarted
