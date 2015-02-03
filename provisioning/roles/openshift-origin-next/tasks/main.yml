@@ -1,0 +1,14 @@
+---
+- name: bootstrap COPR maxamillion/origin-next/repo
+  copy: src=origin-next.repo
+        dest=/etc/yum.repos.d/
+        owner=root group=root mode=0644
+
+- name: enable maxamillion-origin-next repository
+  ini_file: dest=/etc/yum.repos.d/origin-next.repo
+            section=maxamillion-origin-next
+            option=enabled
+            value=1
+
+- name: configure openshift
+  template: src=openshift.sysconfig.j2 dest=/etc/sysconfig/openshift owner=root group=root mode=0644 
