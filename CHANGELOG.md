@@ -1,3 +1,13 @@
+# 0.3.0 (2015-02-04)
+
+Fixes:
+ - updated flannel and kernel RPM to fix a kernel freeze related to vxlan, see https://bugzilla.redhat.com/show_bug.cgi?id=1189050
+
+Known Issues:
+
+ - we need to port that to CentOS7, as a Red Hat internal base box is used.
+
+
 # 0.2.0 (2015-02-04)
 
 Features:
