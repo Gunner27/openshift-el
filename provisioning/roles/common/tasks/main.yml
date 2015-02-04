@@ -1,0 +1,15 @@
+---
+- name: "Build /etc/hosts on all hosts"
+  lineinfile: dest=/etc/hosts
+              regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}"
+              state=present
+  when: hostvars[item].ansible_default_ipv4.address is defined
+  with_items: groups['all']
+
+- name: "distribute motd file"
+  template: src=motd.j2
+            dest=/etc/motd
+            owner=root
+            group=root
+            mode=0644
+
