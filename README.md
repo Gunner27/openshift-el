@@ -21,7 +21,6 @@ vagrant ssh master
 ## TODO
 
 * migrate everything to CentOS
-* connect docker to flannel bridge
 * get interface name from ansible for /etc/sysconfig/flanneld
 
 [1] - http://nvie.com/posts/a-successful-git-branching-model/
