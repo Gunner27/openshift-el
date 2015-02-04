@@ -43,8 +43,47 @@ VAGRANTFILE_API_VERSION = "2"
     }
   end
 
+
+# The number of minions to provision.
+$num_minion = (vagrant_openshift_config['num_minions'] || ENV['OPENSHIFT_NUM_MINIONS'] || 2).to_i
+
+$nodes = [];
+$ansible_groups = {
+  "masters" => ["master"],
+  "minions" => $nodes
+}
+$num_minion.times do |i|
+  $nodes.push("minion-#{i+1}")
+end
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
+  # and num_minions minions, or nodes...
+  dev_cluster = vagrant_openshift_config['dev_cluster'] || ENV['OPENSHIFT_DEV_CLUSTER']
+  if dev_cluster
+    # Start an OpenShift cluster
+    # Currently this only works with the (default) VirtualBox provider.
+
+    # OpenShift minion
+    $num_minion.times do |n|
+      config.vm.define "minion-#{n+1}" do |minion|
+        minion_index = n+1
+
+        minion.vm.box = "rhel-7.0" 
+        minion.vm.box_check_update = false
+        
+        minion.vm.hostname = "minion-#{minion_index}"
+
+        minion.vm.synced_folder ".", "/vagrant", type: "rsync", rsync_exclude: ".git/"
+
+        # this is required to subscribe RHEL7
+        minion.registration.subscriber_username = ENV['SUB_USERNAME']
+        minion.registration.subscriber_password = ENV['SUB_PASSWORD']
+
+      end # minion
+    end # do
+  end # if dev_cluster
+
   # setup a OpenShift master
   config.vm.define "master" do |master|
     master.vm.box = "rhel-7.0"
@@ -58,49 +97,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     master.vm.synced_folder ".", "/vagrant", type: "rsync", rsync_exclude: ".git/"
 
+    # provision all machines using ansible
+    config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "provisioning/playbook.yml"
+
+      ansible.groups = $ansible_groups # generate_ansible_groups(vagrant_openshift_config['num_minions'])
+      ansible.limit = :all
+
+#      ansible.verbose = 'vv'
+    end # ansible
+ 
   end # master
 
-  # and num_minions minions, or nodes...
-  dev_cluster = vagrant_openshift_config['dev_cluster'] || ENV['OPENSHIFT_DEV_CLUSTER']
-  if dev_cluster
-    # Start an OpenShift cluster
-    # Currently this only works with the (default) VirtualBox provider.
-    # The number of minions to provision.
-    num_minion = (vagrant_openshift_config['num_minions'] || ENV['OPENSHIFT_NUM_MINIONS'] || 2).to_i
 
-    # IP configuration
-    master_ip = "10.245.1.2"
-    minion_ip_base = "10.245.2."
-    minion_ips = num_minion.times.collect { |n| minion_ip_base + "#{n+2}" }
-    minion_ips_str = minion_ips.join(",")
 
-    # OpenShift minion
-    num_minion.times do |n|
-      config.vm.define "minion-#{n+1}" do |minion|
-        minion_index = n+1
-        minion_ip = minion_ips[n]
-        minion.vm.box = "rhel-7.0" 
-        
-        minion.vm.network "private_network", ip: "#{minion_ip}"
-        minion.vm.hostname = "minion-#{minion_index}"
-
-        minion.vm.synced_folder ".", "/vagrant", type: "rsync", rsync_exclude: ".git/"
-
-        # this is required to subscribe RHEL7
-        minion.registration.subscriber_username = ENV['SUB_USERNAME']
-        minion.registration.subscriber_password = ENV['SUB_PASSWORD']
-
-      end # minion
-    end # do
-  end # if dev_cluster
-
-  # provision all machines using ansible
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "provisioning/playbook.yml"
-
-    ansible.groups = generate_ansible_groups(vagrant_openshift_config['num_minions'])
-
-#    ansible.verbose = 'vvv'
-  end # ansible
- 
 end # config
