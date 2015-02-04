@@ -3,7 +3,7 @@
 - name: install etcd server packages
   yum: name={{ item }} state=present
   with_items: 
-    - etcd 
+    - http://download.devel.redhat.com/brewroot/packages/etcd/0.4.6/0.12.el7/x86_64/etcd-0.4.6-0.12.el7.x86_64.rpm 
   tags:
     - etcd 
 
@@ -25,19 +25,18 @@
 
 - name: flanneld configuration (copy script)
   template: src=config-flannel.sh.j2 dest=~/config-flannel.sh mode=755
+  tags:
+    - etcd
+    - flannel
+
 - name: flanneld configuration (run script)
   command: ~/config-flannel.sh
-#- name: flanneld configuration (cleanup)
-#  file: name=~/config-flannel.sh state=absent
+  tags:
+    - etcd
+    - flannel
 
-#- name: deploy flannel configuration to etcd
-#  action: shell curl -L "http://{{ etcd_master_hostname }}:{{ etcd_master_port}}/v2/keys/{{ etcd_flannel_key  }}/config" -XPUT --data-urlencode value@/tmp/flannel-config.json 
-#  tags:
-#    - etcd
-#    - flannel
-
-- name: DEBUG - dump flannel configuration 
-  action: shell curl -L http://master:4001/v2/keys/openshift/network/config >/tmp/dump.json
+- name: flanneld configuration (cleanup)
+  file: name=~/config-flannel.sh state=absent
   tags:
     - etcd
     - flannel
