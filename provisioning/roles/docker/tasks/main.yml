@@ -10,10 +10,12 @@
 
 - name: take down docker bridge
   command: ifconfig docker0 down
+  ignore_errors: yes
   tags:
     - docker
 - name: remove docker0 bridge
   command: brctl delbr docker0 
+  ignore_errors: yes
   tags:
     - docker
 

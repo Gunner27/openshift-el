@@ -37,3 +37,6 @@
             group=root
             mode=0644
 
+- name: update Kernel to z-stream
+  yum: name=http://download.devel.redhat.com/brewroot/packages/kernel/3.10.0/123.20.1.el7/x86_64/kernel-3.10.0-123.20.1.el7.x86_64.rpm state=present
+  ignore_errors: yes
