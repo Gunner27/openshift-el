@@ -1,4 +1,28 @@
 ---
+- name: Determine if Atomic
+  command: "grep Atomic /etc/redhat-release"
+  register: is_atomic
+  ignore_errors: yes
+  changed_when: false
+
+- name: Determine if RHEL7
+  shell: "grep 'Red Hat Enterprise Linux.*release 7' /etc/redhat-release"
+  register: is_rhel7
+  ignore_errors: yes
+  changed_when: false
+
+- name: Determine if firewalld installed
+  command: "rpm -q firewalld"
+  register: has_firewalld
+  ignore_errors: yes
+  changed_when: false
+
+- name: Determine if iptables-services installed
+  command: "rpm -q iptables-services"
+  register: has_iptables
+  ignore_errors: yes
+  changed_when: false
+
 - name: "Build /etc/hosts on all hosts"
   lineinfile: dest=/etc/hosts
               regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}"
