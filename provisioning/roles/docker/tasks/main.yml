@@ -1,10 +1,8 @@
 ---
-- name: "install docker and kubernetes"
-  yum: name={{ item }}docker,git,golang,bridge-utils,e2fsprogs,hg,net-tools
+- name: install docker and kubernetes
+  yum: name=docker,git,golang,bridge-utils,e2fsprogs,net-tools
        enablerepo=rhel-7-server-extras-rpms,rhel-7-server-optional-rpms
        state=latest
-  with_items:
-    -
   tags:
     - docker
 
@@ -21,8 +19,6 @@
 
 - name: replace systemd service file, so that flannel is used
   copy: src=docker.service dest=/usr/lib/systemd/system/docker.service mode=0755 owner=root group=root backup=true
-  notify:
-    - restart docker 
   tags: 
     - docker
 

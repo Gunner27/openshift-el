@@ -10,15 +10,24 @@ By now Vagrant required the registration plugin [2] to register and subscribe RH
 ## Installation and Usage
 
 ### Prerequisites
+
+This Vagrant Environment is based on RHEL7, so you will need a RH Account to subscribe your VM.
+
 ```
 $ vagrant plugin list
 vagrant-libvirt (0.0.24)
 vagrant-registration (0.0.6)
 ```
 
+### Installation
+
 ```
 git clone https://github.com/goern/openshift-el.git
 cd openshift-el
+```
+
+### Usage
+```
 export SUB_USERNAME=user@example.com
 export SUB_PASSWORD=password
 vagrant up

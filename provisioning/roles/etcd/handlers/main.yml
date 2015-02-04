@@ -1,0 +1,5 @@
+- name: restart flannel
+  service: name=flanneld state=restarted
+
+- name: restart etcd
+  service: name=etcd state=restarted

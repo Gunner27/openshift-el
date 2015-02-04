@@ -1,0 +1,5 @@
+# Handlers for restarting services
+#
+
+- name: restart docker
+  service: name=docker state=restarted
