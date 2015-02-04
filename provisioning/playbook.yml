@@ -5,15 +5,17 @@
   roles:
     - common
     - docker
-    - openshift-origin-next
+    - openshift-origin-next/common
 
 - hosts: masters
   sudo: yes
   roles:
     - etcd
     - flannel
+    - openshift-origin-next/master
 
 - hosts: minions
   sudo: yes
   roles:
     - flannel
+    - openshift-origin-next/node

@@ -10,5 +10,6 @@
             option=enabled
             value=1
 
-- name: configure openshift
-  template: src=openshift.sysconfig.j2 dest=/etc/sysconfig/openshift owner=root group=root mode=0644 
+- name: install OpenShift Origin 3
+  yum: name=origin state=present
+
