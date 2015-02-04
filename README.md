@@ -9,6 +9,13 @@ By now Vagrant required the registration plugin [2] to register and subscribe RH
 
 ## Installation and Usage
 
+### Prerequisites
+```
+$ vagrant plugin list
+vagrant-libvirt (0.0.24)
+vagrant-registration (0.0.6)
+```
+
 ```
 git clone https://github.com/goern/openshift-el.git
 cd openshift-el
