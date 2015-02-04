@@ -1,0 +1,30 @@
+---
+- name: "install docker and kubernetes"
+  yum: name={{ item }}docker,git,golang,bridge-utils,e2fsprogs,hg,net-tools
+       enablerepo=rhel-7-server-extras-rpms,rhel-7-server-optional-rpms
+       state=latest
+  with_items:
+    -
+  tags:
+    - docker
+
+- name: take down docker bridge
+  command: ifconfig docker0 down
+  tags:
+    - docker
+- name: remove docker0 bridge
+  command: brctl delbr docker0 
+  tags:
+    - docker
+
+- name: replace systemd service file, so that flannel is used
+  copy: src=docker.service dest=/usr/lib/systemd/system/docker.service mode=0755 owner=root group=root backup=true
+  notify:
+    - restart docker 
+  tags: 
+    - docker
+
+- name: reload systemd because the unit file changed on disk
+  command: systemctl daemon-reload
+  tags:
+    - docker

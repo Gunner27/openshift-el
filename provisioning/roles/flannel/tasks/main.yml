@@ -1,0 +1,26 @@
+---
+- name: "install flannel from URL (its not in a repo yet"
+  yum: name=http://download.devel.redhat.com/brewroot/packages/flannel/0.2.0/5.el7/x86_64/flannel-0.2.0-5.el7.x86_64.rpm state=present
+  tags:
+    - flannel
+
+- name: "deploy flannel's sysconfig file"
+  template: src=flanneld.j2
+            dest=/etc/sysconfig/flanneld
+            owner=root
+            group=root
+            mode=0644
+  tags:
+    - flannel
+
+- name: "restart flannel daemon"
+  service: name=flanneld state=restarted enabled=yes
+  tags:
+    - flannel
+
+- name: "restart docker daemon"
+  service: name=docker state=restarted enabled=yes
+  tags:
+    - flannel
+    - docker
+
