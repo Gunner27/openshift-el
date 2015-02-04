@@ -1,8 +1,1 @@
-{
-  "Network": "{{ flannel_network }}",
-  "SubnetLen": 28,
-  "Backend": {
-    "Type": "vxlan",
-    "VNI": 1
-  }
-}
+{ "Network": "{{ flannel_network }}", "SubnetLen": {{ flannel_network_len }}, "Backend": { "Type": "vxlan", "VNI": 1 } }

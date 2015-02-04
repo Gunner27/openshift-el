@@ -4,7 +4,7 @@
   tags:
     - flannel
 
-- name: "flannel's sysconfig"
+- name: "deploy flannel's sysconfig file"
   template: src=flanneld.j2
             dest=/etc/sysconfig/flanneld
             owner=root
@@ -14,12 +14,12 @@
     - flannel
 
 - name: "restart flannel daemon"
-  service: name=flanneld state=started enabled=yes
+  service: name=flanneld state=restarted enabled=yes
   tags:
     - flannel
 
 - name: "restart docker daemon"
-  service: name=docker state=started enabled=yes
+  service: name=docker state=restarted enabled=yes
   tags:
     - flannel
     - docker

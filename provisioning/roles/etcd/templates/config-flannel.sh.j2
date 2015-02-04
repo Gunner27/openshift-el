@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# FIXME it seems like the config must be written to 127.1 why? dunno!
+exec curl -s -L http://127.0.0.1:{{ etcd_master_port }}/v2/keys/{{ etcd_flannel_key }}/config -XPUT -d value='{"Network": "{{ flannel_network }}", "SubnetLen": {{ flannel_network_len }}, "Backend": {"Type": "vxlan"}}'
+
+

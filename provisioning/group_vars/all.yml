@@ -1,7 +1,6 @@
 ---
-# FIXME we should not hardcode an IP address
-# etcd_master_ip: "{{ hostvars['master']['ansible_eth0']['ipv4']['address'] }}" 
-etcd_master_ip: '192.168.121.146'
+etcd_master_hostname: 'master'
 etcd_master_port: 4001
-etcd_flannel_key: '/openshift/network'
-flannel_network: "10.245.2.0/24"
+etcd_flannel_key: 'openshift/network'
+flannel_network: "10.245.0.0/16"
+flannel_network_len: "16"

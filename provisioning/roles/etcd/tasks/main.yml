@@ -4,6 +4,13 @@
   yum: name={{ item }} state=present
   with_items: 
     - etcd 
+  tags:
+    - etcd 
+
+- name: be sure etcd is running and enabled
+  service: name=etcd state=running enabled=yes
+  tags:
+    - etcd 
 
 - name: generate flannel configuration
   template:
@@ -12,6 +19,26 @@
     owner=root
     group=root
     mode=0644
+  tags: 
+    - etcd 
+    - flannel
 
-- name: deploy flannel configuration to etcd
-  action: shell curl -L "http://{{ etcd_master_ip }}:{{ etcd_master_port}}/v2/keys/{{ etcd_flannel_key  }}/config" -XPUT --data-urlencode value@/tmp/flannel-config.json 
+- name: flanneld configuration (copy script)
+  template: src=config-flannel.sh.j2 dest=~/config-flannel.sh mode=755
+- name: flanneld configuration (run script)
+  command: ~/config-flannel.sh
+#- name: flanneld configuration (cleanup)
+#  file: name=~/config-flannel.sh state=absent
+
+#- name: deploy flannel configuration to etcd
+#  action: shell curl -L "http://{{ etcd_master_hostname }}:{{ etcd_master_port}}/v2/keys/{{ etcd_flannel_key  }}/config" -XPUT --data-urlencode value@/tmp/flannel-config.json 
+#  tags:
+#    - etcd
+#    - flannel
+
+- name: DEBUG - dump flannel configuration 
+  action: shell curl -L http://master:4001/v2/keys/openshift/network/config >/tmp/dump.json
+  tags:
+    - etcd
+    - flannel
+
