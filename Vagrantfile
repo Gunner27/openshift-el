@@ -81,7 +81,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         minion.vm.box = "rhel-7.0" 
         minion.vm.box_check_update = false
         
-        minion.vm.hostname = "minion-#{minion_index}"
+        minion.vm.hostname = "minion-#{minion_index}.goern.example.com"
 
         minion.vm.synced_folder ".", "/vagrant", type: "rsync", rsync_exclude: ".git/"
 
@@ -98,7 +98,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master.vm.box = "rhel-7.0"
     master.vm.box_check_update = false
 
-    master.vm.hostname = 'master'
+    master.vm.hostname = 'master.goern.example.com'
 
     # this is required to subscribe RHEL7
     master.registration.subscriber_username = ENV['SUB_USERNAME']
