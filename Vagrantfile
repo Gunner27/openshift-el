@@ -1,6 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'json'
+
 def generate_ansible_groups(num_minions)
   minions = Array.new
   1.upto(num_minions) do |n|
@@ -43,6 +45,10 @@ VAGRANTFILE_API_VERSION = "2"
     }
   end
 
+  # write back the config
+  File.open('.vagrant-openshift.json','w') do |f|
+    f.write(JSON.pretty_generate(vagrant_openshift_config))
+  end
 
 # The number of minions to provision.
 $num_minion = (vagrant_openshift_config['num_minions'] || ENV['OPENSHIFT_NUM_MINIONS'] || 2).to_i
@@ -57,7 +63,10 @@ $num_minion.times do |i|
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.memory = 1024
+  end 
+ 
   # and num_minions minions, or nodes...
   dev_cluster = vagrant_openshift_config['dev_cluster'] || ENV['OPENSHIFT_DEV_CLUSTER']
   if dev_cluster
