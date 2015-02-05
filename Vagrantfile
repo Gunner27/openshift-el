@@ -3,21 +3,6 @@
 
 require 'json'
 
-def generate_ansible_groups(num_minions)
-  minions = Array.new
-  1.upto(num_minions) do |n|
-    minions.push("minion-#{n}")
-  end
-
-  groups = { 
-    "minions" => minions,
-    "masters" => ["master"],
-
-    "all_groups:children" => ["masters", "minions"]
-  }
-
-  return groups
-end
 
 # Require a recent version of vagrant otherwise some have reported errors setting host names on boxes
 Vagrant.require_version ">= 1.6.2"
@@ -25,30 +10,48 @@ Vagrant.require_version ">= 1.6.2"
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-  # attempt to read config in this repo's .vagrant-openshift.json if present
-  if File.exist?('.vagrant-openshift.json')
-    json = File.read('.vagrant-openshift.json')
-    begin
-      vagrant_openshift_config = JSON.parse(json)
-    rescue JSON::ParserError => e
-      raise VFLoadError.new "Error parsing .vagrant-openshift.json:\n#{e}"
-    end
-  else
-    # this is only used as default when .vagrant-openshift.json does not exist
-    vagrant_openshift_config = {
-      "dev_cluster" => true,
-      "num_minions" => ENV['OPENSHIFT_NUM_MINIONS'] || 2,
-      "libvirt" => {
-        "box_name" => "rhel-7.0",
-        "box_url" => "http://file.rdu.redhat.com/~jshubin/vagrant/rhel-7.0/rhel-7.0.box"
-      },
-    }
+# attempt to read config from .vagrant-openshift.json if present
+if File.exist?('.vagrant-openshift.json')
+  json = File.read('.vagrant-openshift.json')
+  begin
+    vagrant_openshift_config = JSON.parse(json)
+  rescue JSON::ParserError => e
+    raise VFLoadError.new "Error parsing .vagrant-openshift.json:\n#{e}"
   end
+else
+  # this is only used as default when .vagrant-openshift.json does not exist
+  vagrant_openshift_config = {
+    "dev_cluster" => true,
+    "num_minions" => ENV['OPENSHIFT_NUM_MINIONS'] || 2, # and ENV will override the default of 2
+    "libvirt" => {
+      "box_name" => "rhel-7.0",
+      "box_url" => "http://file.rdu.redhat.com/~jshubin/vagrant/rhel-7.0/rhel-7.0.box"
+    },
+  }
+end
 
-  # write back the config
-  File.open('.vagrant-openshift.json','w') do |f|
-    f.write(JSON.pretty_generate(vagrant_openshift_config))
+# ARGV parser
+skip = 0
+while skip < ARGV.length
+  puts "#{skip}, #{ARGV[skip]}" # debug
+
+  # commandline will override ENV will override .vagrant-openshift.json
+  if ARGV[skip].start_with?(arg='--number-of-minions=')
+    v = ARGV.delete_at(skip).dup
+    v.slice! arg
+    puts "#{arg}, #{v}" # debug
+    vagrant_openshift_config['num_minions'] = v.to_s
+
+  else	# skip over non custom vagrant args
+    skip = skip + 1
   end
+end
+
+# write back the config
+File.open('.vagrant-openshift.json','w') do |f|
+  f.write(JSON.pretty_generate(vagrant_openshift_config))
+end
+
 
 # The number of minions to provision.
 $num_minion = (vagrant_openshift_config['num_minions'] || ENV['OPENSHIFT_NUM_MINIONS'] || 2).to_i
@@ -110,7 +113,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.provision "ansible" do |ansible|
       ansible.playbook = "provisioning/playbook.yml"
 
-      ansible.groups = $ansible_groups # generate_ansible_groups(vagrant_openshift_config['num_minions'])
+      ansible.groups = $ansible_groups
       ansible.limit = :all
 
 #      ansible.verbose = 'vv'

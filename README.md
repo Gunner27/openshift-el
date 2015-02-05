@@ -34,6 +34,15 @@ vagrant up
 vagrant ssh master
 ```
 
+`vagrant provision` will ensure that a given stats is configured, one ansible play will install a new kernel, some please be sure to `vagrant reload` the environment after first provisioning.
+
+### Configuration
+
+In general the Vagrantfile carries some meaningful default values, these will be written to .vagrant-openshift.json and reread on each vagrant run. Some variables may be overwritten by command line arguments. 
+
+####`--number-of-minions
+The number of VM configured to be a kubernetes minion, or openshift node.
+
 ## TODO
 
 * migrate everything to CentOS
