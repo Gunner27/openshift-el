@@ -2,4 +2,4 @@
 #
 
 - name: restart origin
-  service: name=openshift state=restarted
+  service: name=openshift state=restarted enabled=yes 
