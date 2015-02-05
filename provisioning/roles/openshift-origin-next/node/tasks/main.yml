@@ -2,4 +2,4 @@
 - name: configure openshift
   template: src=openshift.sysconfig.j2 dest=/etc/sysconfig/openshift owner=root group=root mode=0644 
   notify:
-    - restart service origin
+    - restart origin
