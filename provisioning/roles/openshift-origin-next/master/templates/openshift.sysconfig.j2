@@ -1,2 +1,2 @@
 ROLE="master"
-OPTIONS="--nodes={{ hostvars  }}"
+OPTIONS="--etcd=http://{{ etcd_master_hostname}}:{{ etcd_master_port }}/ --nodes={{ groups['minions']|join(',') }}"

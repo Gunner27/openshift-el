@@ -11,6 +11,11 @@
   ignore_errors: yes
   changed_when: false
 
+- name: Kernel Version
+  shell: "uname -r"
+  register: kernel_version
+  changed_when: false
+
 - name: Determine if firewalld installed
   command: "rpm -q firewalld"
   register: has_firewalld
@@ -37,6 +42,7 @@
             group=root
             mode=0644
 
+# FIXME use http://docs.ansible.com/playbooks_variables.html#version-comparison-filters to run this conditionally
 - name: update Kernel to z-stream
   yum: name=http://download.devel.redhat.com/brewroot/packages/kernel/3.10.0/123.20.1.el7/x86_64/kernel-3.10.0-123.20.1.el7.x86_64.rpm state=present
   ignore_errors: yes

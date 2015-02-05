@@ -19,6 +19,8 @@ vagrant-libvirt (0.0.24)
 vagrant-registration (0.0.6)
 ```
 
+Provisioning of Vagrant's VM is done using Ansible, it must be installed on your local host.
+
 ### Installation
 
 ```

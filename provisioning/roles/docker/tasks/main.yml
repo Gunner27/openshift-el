@@ -6,6 +6,7 @@
   tags:
     - docker
 
+# FIXME check if hostvars["ansible_interfaces"] contains docker0
 - name: take down docker bridge
   command: ifconfig docker0 down
   ignore_errors: yes
