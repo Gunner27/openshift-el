@@ -1,3 +1,8 @@
+# 0.4.0 (2015-02-16)
+
+This is the last release that will include Vagrant, next release will be standalone ansible playbook that could be used with oh-my-vagrant or standalone...
+
+
 # 0.3.0 (2015-02-04)
 
 Fixes:
