@@ -1,0 +1,27 @@
+---
+:domain: goern.example.com
+:network: 192.168.124.0/24
+:image: rhel-7.0
+:boxurlprefix: ''
+:sync: rsync
+:folder: ''
+:extern:
+- type: git
+  repository: https://github.com/goern/openshift-el
+  directory: ansible
+:puppet: false
+:classes: []
+:ansible: true
+:docker: false
+:cachier: false
+:vms:
+- :name: master
+- :name: minion-1
+- :name: minion-2
+  :image: rhel-7.0
+:namespace: oso
+:count: 0
+:username: ''
+:password: ''
+:poolid: []
+:repos: []
